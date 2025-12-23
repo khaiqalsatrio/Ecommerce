@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,22 +13,19 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name'     => 'required|string',
-            'email'    => 'required|email|unique:users,email',
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6'
         ]);
 
-        $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role'     => 'customer'
+            'role' => 'customer'
         ]);
 
-        return response()->json([
-            'message' => 'Register berhasil',
-            'user'    => $user
-        ]);
+        return redirect('/login')->with('success', 'Register berhasil');
     }
 
     public function login(Request $request)
@@ -35,18 +33,17 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Login gagal'], 401);
+            return back()->with('error', 'Email atau password salah');
         }
 
-        return response()->json([
-            'message' => 'Login berhasil',
-            'user'    => Auth::user()
-        ]);
+        return auth()->user()->role === 'admin'
+            ? redirect('/admin/dashboard')
+            : redirect('/');
     }
 
     public function logout()
     {
         Auth::logout();
-        return response()->json(['message' => 'Logout berhasil']);
+        return redirect('/login');
     }
 }
