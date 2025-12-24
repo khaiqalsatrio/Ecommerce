@@ -19,32 +19,41 @@ use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\OrderAdminController;
 
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return auth()->user()->role === 'admin'
-            ? redirect()->route('admin.dashboard')
-            : redirect()->route('buyer.dashboard');
-    }
-
-    return redirect()->route('login');
-});
-
 /*
 |--------------------------------------------------------------------------
-| AUTH ROUTE
+| PUBLIC ROUTES (NO LOGIN REQUIRED)
 |--------------------------------------------------------------------------
 */
 
+// HOME
+Route::get('/', [DashboardBuyerController::class, 'index'])->name('home');
+Route::get('/', [DashboardBuyerController::class, 'index'])->name('home');
+
+// PRODUCTS
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+// CART (VIEW ONLY)
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+
+/*
+|--------------------------------------------------------------------------
+| AUTH ROUTES
+|--------------------------------------------------------------------------
+*/
 Route::get('/login', fn() => view('auth.login'))->name('login');
 Route::get('/register', fn() => view('auth.register'));
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 /*
 |--------------------------------------------------------------------------
-| BUYER ROUTE
+| BUYER ROUTES (LOGIN REQUIRED)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'buyer'])
@@ -52,22 +61,9 @@ Route::middleware(['auth', 'buyer'])
     ->as('buyer.')
     ->group(function () {
 
-        Route::get('/dashboard', [DashboardBuyerController::class, 'index'])
-            ->name('dashboard');
-
-        // PRODUCTS
-        Route::get('/products', [ProductController::class, 'index'])
-            ->name('products.index');
-
-        Route::get('/products/{product}', [ProductController::class, 'show'])
-            ->name('products.show');
-
-        // CART
+        // ADD / REMOVE CART
         Route::post('/cart/add/{product}', [CartController::class, 'add'])
             ->name('cart.add');
-
-        Route::get('/cart', [CartController::class, 'index'])
-            ->name('cart.index');
 
         Route::post('/cart/remove/{product}', [CartController::class, 'remove'])
             ->name('cart.remove');
@@ -87,6 +83,11 @@ Route::middleware(['auth', 'buyer'])
             ->name('payment.confirm');
     });
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES (LOGIN REQUIRED)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->as('admin.')

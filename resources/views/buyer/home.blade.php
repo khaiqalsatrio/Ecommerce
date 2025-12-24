@@ -2,11 +2,10 @@
 
 @section('title', 'Home')
 
-
 @section('content')
 
 {{-- HERO BANNER --}}
-<div class="mb-5">
+<div class="mb-5 ">
     <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-indicators">
             <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
@@ -17,7 +16,7 @@
         <div class="carousel-inner rounded-3 shadow">
             {{-- Slide 1 --}}
             <div class="carousel-item active">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #393a3bff 0%, #393a3bff 100%);">
+                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
                     <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
                         <h1 class="display-4 fw-bold mb-3">Selamat Datang di MyShop</h1>
                         <p class="lead mb-4">Temukan produk berkualitas dengan harga terbaik</p>
@@ -30,7 +29,7 @@
 
             {{-- Slide 2 --}}
             <div class="carousel-item">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #393a3bff 0%, #393a3bff 100%);">
+                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
                     <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
                         <h1 class="display-4 fw-bold mb-3">Promo Spesial</h1>
                         <p class="lead mb-4">Diskon hingga 50% untuk produk pilihan</p>
@@ -43,7 +42,7 @@
 
             {{-- Slide 3 --}}
             <div class="carousel-item">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #393a3bff 0%, #393a3bff 100%);">
+                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
                     <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
                         <h1 class="display-4 fw-bold mb-3">Gratis Ongkir</h1>
                         <p class="lead mb-4">Untuk pembelian minimal Rp 100.000</p>
@@ -168,7 +167,7 @@
                         Rp {{ number_format($product->price,0,',','.') }}
                     </span>
 
-                    <a href="{{ route('buyer.products.show', $product->id) }}"
+                    <a href="{{ route('products.show', $product->id) }}"
                         class="btn btn-outline-primary btn-sm mt-auto w-100">
                         <i class="bi bi-eye me-1"></i> Lihat Produk
                     </a>
