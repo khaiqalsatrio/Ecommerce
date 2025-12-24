@@ -12,12 +12,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return response()->json([
+        return view('admin.home', [
             'total_users'    => User::count(),
             'total_products' => Product::count(),
             'total_orders'   => Order::count(),
             'paid_orders'    => Order::where('payment_status', 'paid')->count(),
-            'total_income'   => Payment::where('status', 'success')->sum('order_id')
+            'total_income'   => Payment::where('status', 'success')->sum('amount'),
         ]);
+        return view('admin.dashboard', compact('sales'));
     }
 }

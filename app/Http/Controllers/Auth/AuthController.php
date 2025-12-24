@@ -13,14 +13,14 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6|confirmed'
         ]);
 
         User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower(trim($request->email)),
             'password' => Hash::make($request->password),
             'role' => 'customer'
         ]);
@@ -36,10 +36,15 @@ class AuthController extends Controller
             return back()->with('error', 'Email atau password salah');
         }
 
-        return auth()->user()->role === 'admin'
-            ? redirect('/admin/dashboard')
-            : redirect('/');
+        $request->session()->regenerate(); 
+
+        if (auth()->user()->role === 'admin') {
+            return redirect('/admin/dashboard');
+        }
+
+        return redirect('/'); 
     }
+
 
     public function logout()
     {

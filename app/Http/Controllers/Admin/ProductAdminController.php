@@ -4,64 +4,113 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ProductAdminController extends Controller
 {
+    /**
+     * LIST PRODUK
+     */
     public function index()
     {
-        return Product::with('category', 'images')->get();
+        $products = Product::with(['category', 'images'])
+            ->latest()
+            ->get();
+
+        return view('admin.products', compact('products'));
     }
 
+    /**
+     * FORM TAMBAH PRODUK
+     */
+    public function create()
+    {
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.products-create', compact('categories'));
+    }
+
+    /**
+     * SIMPAN PRODUK
+     */
     public function store(Request $request)
     {
         $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'name'        => 'required|string',
-            'price'       => 'required|numeric',
-            'stock'       => 'required|integer'
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'weight'      => 'nullable|numeric|min:0',
         ]);
 
-        $product = Product::create([
+        Product::create([
             'category_id' => $request->category_id,
             'name'        => $request->name,
-            'slug'        => Str::slug($request->name),
+            'slug'        => Str::slug($request->name) . '-' . uniqid(),
             'description' => $request->description,
             'price'       => $request->price,
             'stock'       => $request->stock,
             'weight'      => $request->weight,
-            'status'      => 'active'
+            'status'      => 'active',
         ]);
 
-        return response()->json($product);
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil ditambahkan');
     }
 
-    public function show($id)
+    /**
+     * FORM EDIT
+     */
+    public function edit(Product $product)
     {
-        return Product::with('images')->findOrFail($id);
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.products-edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * UPDATE PRODUK
+     */
+    public function update(Request $request, Product $product)
     {
-        $product = Product::findOrFail($id);
+        $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name'        => 'required|string|max:255',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'weight'      => 'nullable|numeric|min:0',
+            'status'      => 'required|in:active,inactive',
+        ]);
 
-        $product->update($request->only([
-            'category_id',
-            'name',
-            'description',
-            'price',
-            'stock',
-            'weight',
-            'status'
-        ]));
+        $product->update([
+            'category_id' => $request->category_id,
+            'name'        => $request->name,
+            'description' => $request->description,
+            'price'       => $request->price,
+            'stock'       => $request->stock,
+            'weight'      => $request->weight,
+            'status'      => $request->status,
+        ]);
 
-        return response()->json(['message' => 'Produk berhasil diupdate']);
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil diperbarui');
     }
 
-    public function destroy($id)
+    /**
+     * HAPUS PRODUK
+     */
+    public function destroy(Product $product)
     {
-        Product::findOrFail($id)->delete();
-        return response()->json(['message' => 'Produk berhasil dihapus']);
+        $product->delete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produk berhasil dihapus');
     }
 }
