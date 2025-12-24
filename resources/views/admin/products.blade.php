@@ -23,6 +23,7 @@
                 <thead class="table-light">
                     <tr>
                         <th style="width:50px;">#</th>
+                        <th style="width:80px;">Image</th>
                         <th>Product</th>
                         <th style="width:150px;">Price</th>
                         <th>Description</th>
@@ -33,7 +34,22 @@
                 <tbody>
                     @forelse($products as $product)
                     <tr>
+                        {{-- NO --}}
                         <td class="fw-semibold">{{ $loop->iteration }}</td>
+
+                        {{-- IMAGE --}}
+                        <td>
+                            @if($product->images->count())
+                            <img src="{{ asset('storage/'.$product->images->first()->image) }}"
+                                class="rounded-3 border"
+                                style="width:60px;height:60px;object-fit:cover;">
+                            @else
+                            <div class="bg-light rounded-3 d-flex align-items-center justify-content-center"
+                                style="width:60px;height:60px;">
+                                <i class="bi bi-image text-muted"></i>
+                            </div>
+                            @endif
+                        </td>
 
                         {{-- PRODUCT --}}
                         <td>
@@ -79,7 +95,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">
+                        <td colspan="6" class="text-center text-muted py-4">
                             <i class="bi bi-box-seam fs-4 d-block mb-2"></i>
                             No products found
                         </td>

@@ -18,7 +18,7 @@
         </div>
         @endif
 
-        <form action="{{ route('admin.products.store') }}" method="POST">
+        <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="row g-3">
@@ -101,6 +101,26 @@
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
+
+                {{-- PRODUCT IMAGES --}}
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Product Images</label>
+
+                    <input type="file"
+                        name="images[]"
+                        class="form-control rounded-3 @error('images.*') is-invalid @enderror"
+                        multiple
+                        accept="image/*">
+
+                    <small class="text-muted">
+                        Bisa upload lebih dari 1 gambar (jpg, png, webp)
+                    </small>
+
+                    @error('images.*')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
 
             </div>
 

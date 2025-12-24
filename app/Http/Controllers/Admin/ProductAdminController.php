@@ -22,9 +22,9 @@ class ProductAdminController extends Controller
         return view('admin.products', compact('products'));
     }
 
-    /**
-     * FORM TAMBAH PRODUK
-     */
+
+    //  * FORM TAMBAH PRODUK
+
     public function create()
     {
         $categories = Category::orderBy('name')->get();
@@ -32,9 +32,9 @@ class ProductAdminController extends Controller
         return view('admin.products-create', compact('categories'));
     }
 
-    /**
-     * SIMPAN PRODUK
-     */
+
+    //  * SIMPAN PRODUK
+
     public function store(Request $request)
     {
         $request->validate([
@@ -44,9 +44,11 @@ class ProductAdminController extends Controller
             'stock'       => 'required|integer|min:0',
             'description' => 'nullable|string',
             'weight'      => 'nullable|numeric|min:0',
+            'images.*'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        Product::create([
+        // Simpan produk
+        $product = Product::create([
             'category_id' => $request->category_id,
             'name'        => $request->name,
             'slug'        => Str::slug($request->name) . '-' . uniqid(),
@@ -56,6 +58,17 @@ class ProductAdminController extends Controller
             'weight'      => $request->weight,
             'status'      => 'active',
         ]);
+
+        // Simpan gambar (jika ada)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('uploads', 'public');
+
+                $product->images()->create([
+                    'image' => $path
+                ]);
+            }
+        }
 
         return redirect()
             ->route('admin.products.index')
