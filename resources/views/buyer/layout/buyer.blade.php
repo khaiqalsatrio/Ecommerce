@@ -38,7 +38,7 @@
                 {{-- Brand Section --}}
                 <div class="col-lg-4 col-md-6">
                     <h5 class="fw-bold mb-3">
-                        <i class="bi bi-shop"></i> MyShop
+                        <i class="bi bi-shop"></i> MyCoffee
                     </h5>
                     <p class="text-white-50 mb-3">
                         Your trusted online shopping destination for quality products at the best prices.
@@ -148,7 +148,7 @@
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     <small class="text-white-50">
-                        &copy; {{ date('Y') }} MyShop. All rights reserved.
+                        &copy; {{ date('Y') }} MyCoffee. All rights reserved.
                     </small>
                 </div>
                 <div class="col-md-6 text-center text-md-end">

@@ -27,11 +27,10 @@ use App\Http\Controllers\Admin\OrderAdminController;
 
 // HOME
 Route::get('/', [DashboardBuyerController::class, 'index'])->name('home');
-Route::get('/', [DashboardBuyerController::class, 'index'])->name('home');
 
 // PRODUCTS
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show'); // ✅ Ubah dari {product} ke {id}
 
 // CART (VIEW ONLY)
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -62,10 +61,10 @@ Route::middleware(['auth', 'buyer'])
     ->group(function () {
 
         // ADD / REMOVE CART
-        Route::post('/cart/add/{product}', [CartController::class, 'add'])
+        Route::post('/cart/add/{id}', [CartController::class, 'add'])
             ->name('cart.add');
 
-        Route::post('/cart/remove/{product}', [CartController::class, 'remove'])
+        Route::post('/cart/remove/{id}', [CartController::class, 'remove'])
             ->name('cart.remove');
 
         // CHECKOUT
@@ -111,7 +110,7 @@ Route::middleware(['auth', 'admin'])
         Route::delete('/products/{product}', [ProductAdminController::class, 'destroy'])
             ->name('products.destroy');
 
-        // CATEGORIES 🔥
+        // CATEGORIES
         Route::get('/categories', [CategoryAdminController::class, 'index'])
             ->name('categories.index');
         Route::get('/categories/create', [CategoryAdminController::class, 'create'])

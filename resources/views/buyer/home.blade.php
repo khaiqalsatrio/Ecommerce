@@ -18,7 +18,7 @@
             <div class="carousel-item active">
                 <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
                     <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
-                        <h1 class="display-4 fw-bold mb-3">Selamat Datang di MyShop</h1>
+                        <h1 class="display-4 fw-bold mb-3">Selamat Datang di MyCoffee</h1>
                         <p class="lead mb-4">Temukan produk berkualitas dengan harga terbaik</p>
                         <a href="#products" class="btn btn-light btn-lg px-4 rounded-pill">
                             <i class="bi bi-bag-check me-2"></i>Belanja Sekarang
@@ -167,8 +167,8 @@
                         Rp {{ number_format($product->price,0,',','.') }}
                     </span>
 
-                    <a href="{{ route('products.show', $product->id) }}"
-                        class="btn btn-outline-primary btn-sm mt-auto w-100">
+                    <a href="{{ route('products.show', $product->slug) }}" {{-- Pakai slug --}}
+                        class="btn btn-outline-success btn-sm mt-auto w-100">
                         <i class="bi bi-eye me-1"></i> Lihat Produk
                     </a>
                 </div>

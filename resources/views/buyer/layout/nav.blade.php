@@ -111,12 +111,12 @@
 
 {{-- NAVBAR --}}
 <div class="navbar-wrapper">
-    <div class="container">
+    <div class="container mt-3">
         <nav class="navbar navbar-expand-lg navbar-custom">
 
             {{-- Brand --}}
             <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-shop"></i> MyShop
+                <i class="bi bi-shop"></i> MyCoffee
             </a>
 
             {{-- Toggler --}}
