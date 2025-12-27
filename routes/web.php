@@ -30,7 +30,7 @@ Route::get('/', [DashboardBuyerController::class, 'index'])->name('home');
 
 // PRODUCTS
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show'); // ✅ Ubah dari {product} ke {id}
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
 // CART (VIEW ONLY)
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -60,12 +60,18 @@ Route::middleware(['auth', 'buyer'])
     ->as('buyer.')
     ->group(function () {
 
-        // ADD / REMOVE CART
+        // CART
+        Route::get('/cart', [CartController::class, 'index'])
+            ->name('cart.index');
+
         Route::post('/cart/add/{id}', [CartController::class, 'add'])
             ->name('cart.add');
 
         Route::post('/cart/remove/{id}', [CartController::class, 'remove'])
             ->name('cart.remove');
+
+        Route::post('/cart/update/{id}', [CartController::class, 'update'])
+            ->name('cart.update');
 
         // CHECKOUT
         Route::get('/checkout', [CheckoutController::class, 'index'])
@@ -81,6 +87,7 @@ Route::middleware(['auth', 'buyer'])
         Route::post('/payment/confirm', [PaymentController::class, 'confirm'])
             ->name('payment.confirm');
     });
+
 
 /*
 |--------------------------------------------------------------------------

@@ -124,47 +124,38 @@
                 </div>
 
                 {{-- Quantity Selector & Action Buttons --}}
-                <form action="{{ route('buyer.cart.add', $product->id) }}" method="POST" id="addToCartForm">
+                <form action="{{ route('buyer.cart.add', $product->id) }}" method="POST">
                     @csrf
+
+                    <!-- WAJIB -->
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Jumlah</label>
                         <div class="input-group" style="max-width: 180px;">
                             <button type="button" class="btn btn-outline-secondary px-3" onclick="decreaseQty()">
                                 <i class="bi bi-dash"></i>
                             </button>
+
+                            <!-- GANTI name -->
                             <input type="number"
                                 class="form-control text-center fw-semibold"
-                                name="quantity"
+                                name="qty" {{-- ✅ BUKAN quantity --}}
                                 id="quantity"
                                 value="1"
                                 min="1"
                                 max="{{ $product->stock }}"
                                 required>
+
                             <button type="button" class="btn btn-outline-secondary px-3" onclick="increaseQty()">
                                 <i class="bi bi-plus"></i>
                             </button>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        @if($product->stock > 0)
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
-                        </button>
-
-                        <button type="button" class="btn btn-success btn-lg" onclick="buyNow()">
-                            <i class="bi bi-bag-check me-2"></i> Beli Sekarang
-                        </button>
-                        @else
-                        <button type="button" class="btn btn-secondary btn-lg" disabled>
-                            <i class="bi bi-x-circle me-2"></i> Stok Habis
-                        </button>
-                        @endif
-
-                        <a href="/" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i> Kembali ke Produk
-                        </a>
-                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
+                    </button>
                 </form>
 
                 {{-- Success/Error Messages --}}

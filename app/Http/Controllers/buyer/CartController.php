@@ -12,10 +12,19 @@ class CartController extends Controller
 {
     public function add(Request $request)
     {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'qty' => 'required|integer|min:1'
+        ]);
+
         $product = Product::findOrFail($request->product_id);
 
         if ($product->stock < $request->qty) {
-            return response()->json(['message' => 'Stok tidak cukup'], 400);
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Stok tidak cukup'], 400);
+            }
+
+            return redirect()->back()->with('error', 'Stok tidak cukup');
         }
 
         $cart = Cart::firstOrCreate([
@@ -37,15 +46,86 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Berhasil ditambahkan']);
+        // AJAX (Buy Now)
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Berhasil ditambahkan'
+            ]);
+        }
+
+        // FORM BIASA (Tambah ke Keranjang)
+        return redirect()
+            ->route('buyer.cart.index')
+            ->with('success', 'Produk berhasil ditambahkan ke keranjang');
     }
 
+    // HALAMAN CART (WAJIB VIEW)
     public function index()
     {
-        return auth()->user()
-            ->cart
-            ->items()
-            ->with('product.images')
-            ->get();
+        $cart = Cart::with('items.product.images')
+            ->where('user_id', auth()->id())
+            ->first();
+
+        return view('buyer.cart', [
+            'cart' => $cart
+        ]);
+    }
+
+    public function remove($id)
+    {
+        $cart = Cart::where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return redirect()->back()->with('error', 'Keranjang tidak ditemukan');
+        }
+
+        $item = CartItem::where('id', $id)
+            ->where('cart_id', $cart->id)
+            ->first();
+
+        if (!$item) {
+            return redirect()->back()->with('error', 'Item tidak ditemukan di keranjang');
+        }
+
+        $item->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Item berhasil dihapus dari keranjang');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'qty' => 'required|integer|min:1'
+        ]);
+
+        $cart = Cart::where('user_id', auth()->id())->first();
+
+        if (!$cart) {
+            return redirect()->back()->with('error', 'Keranjang tidak ditemukan');
+        }
+
+        $item = CartItem::where('id', $id)
+            ->where('cart_id', $cart->id)
+            ->with('product')
+            ->first();
+
+        if (!$item) {
+            return redirect()->back()->with('error', 'Item tidak ditemukan');
+        }
+
+        // cek stok
+        if ($request->qty > $item->product->stock) {
+            return redirect()->back()
+                ->with('error', 'Jumlah melebihi stok tersedia');
+        }
+
+        $item->update([
+            'qty' => $request->qty
+        ]);
+
+        return redirect()->back()->with('success', 'Jumlah produk diperbarui');
     }
 }
