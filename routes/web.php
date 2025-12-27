@@ -73,6 +73,14 @@ Route::middleware(['auth', 'buyer'])
         Route::post('/cart/update/{id}', [CartController::class, 'update'])
             ->name('cart.update');
 
+        // PRODUCTS
+        Route::get('/products', [ProductController::class, 'index'])
+            ->name('products.index');
+
+        Route::get('/products/{slug}', [ProductController::class, 'show'])
+            ->name('products.show');
+
+
         // CHECKOUT
         Route::get('/checkout', [CheckoutController::class, 'index'])
             ->name('checkout.index');

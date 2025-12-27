@@ -137,11 +137,10 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}"
-                            href="{{ route('products.index') }}">
-                            <i class="bi bi-grid"></i> Products
+                        <a class="nav-link {{ request()->routeIs('buyer.products.*') ? 'active' : '' }}"
+                            href="{{ route('buyer.products.index') }}">
+                            <i class="bi bi-grid"></i> Produk
                         </a>
-
                     </li>
 
                     <li class="nav-item">

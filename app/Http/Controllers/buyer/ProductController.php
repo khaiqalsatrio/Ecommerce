@@ -7,21 +7,19 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    // Untuk halaman list products
     public function index()
     {
         $products = Product::with('category')
             ->where('status', 'active')
             ->get();
 
-        return view('buyer.layout.products-real', compact('products'));
+        return view('buyer.products-real', compact('products'));
     }
 
-    // Untuk halaman detail product
     public function show($slug)
     {
-        $product = Product::where('slug', $slug)
-            ->with('category')
+        $product = Product::with('category')
+            ->where('slug', $slug)
             ->firstOrFail();
 
         return view('buyer.product-show', compact('product'));
