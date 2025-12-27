@@ -11,7 +11,7 @@
                 <h2 class="fw-bold mb-2">Checkout</h2>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none">Keranjang</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('buyer.cart.index') }}" class="text-decoration-none">Keranjang</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Checkout</li>
                     </ol>
                 </nav>
@@ -158,6 +158,7 @@
                                     <span class="badge bg-white border text-dark">Transfer Bank</span>
                                     <span class="badge bg-white border text-dark">E-Wallet</span>
                                     <span class="badge bg-white border text-dark">QRIS</span>
+                                    <span class="badge bg-white border text-dark">Kartu Kredit</span>
                                 </div>
                             </div>
                         </div>
@@ -170,6 +171,9 @@
 @endsection
 
 @push('scripts')
+{{-- Load Midtrans Snap.js - SANDBOX --}}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+
 <script>
     document.getElementById('checkout-form').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -190,15 +194,34 @@
             })
             .then(res => res.json())
             .then(data => {
-                if (data.success) {
-                    // Show success state
-                    button.innerHTML = '<svg width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>Berhasil!';
-
-                    setTimeout(() => {
-                        window.location.href = "/buyer/payment/" + data.order_id;
-                    }, 500);
+                if (data.success && data.snap_token) {
+                    // Buka Midtrans Snap popup
+                    window.snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            console.log('Payment success:', result);
+                            // Redirect ke halaman success
+                            window.location.href = "/buyer/order/success/" + data.order_code;
+                        },
+                        onPending: function(result) {
+                            console.log('Payment pending:', result);
+                            // Redirect ke halaman pending
+                            window.location.href = "/buyer/order/pending/" + data.order_code;
+                        },
+                        onError: function(result) {
+                            console.log('Payment error:', result);
+                            alert('Pembayaran gagal. Silakan coba lagi.');
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                        },
+                        onClose: function() {
+                            console.log('Payment popup closed');
+                            // User menutup popup tanpa menyelesaikan pembayaran
+                            button.disabled = false;
+                            button.innerHTML = originalText;
+                        }
+                    });
                 } else {
-                    alert('Checkout gagal. Silakan coba lagi.');
+                    alert(data.message || 'Checkout gagal. Silakan coba lagi.');
                     button.disabled = false;
                     button.innerHTML = originalText;
                 }
