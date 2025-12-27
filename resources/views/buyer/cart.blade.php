@@ -123,7 +123,7 @@
 
                     <hr>
 
-                    <a href="{{ route('buyer.checkout.index') }}" class="btn btn-success w-100">
+                    <a href="{{ route('buyer.checkout.show') }}" class="btn btn-success w-100">
                         <i class="bi bi-bag-check me-2"></i>
                         Checkout
                     </a>

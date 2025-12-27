@@ -160,7 +160,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li>
-                                <a href="#" class="dropdown-item">
+                                <a class="dropdown-item" href="{{ route('buyer.profile') }}">
                                     <i class="bi bi-person"></i> Profile
                                 </a>
                             </li>

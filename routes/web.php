@@ -17,7 +17,7 @@ use App\Http\Controllers\Buyer\DashboardBuyerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\OrderAdminController;
-
+use App\Http\Controllers\buyer\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,10 +80,9 @@ Route::middleware(['auth', 'buyer'])
         Route::get('/products/{slug}', [ProductController::class, 'show'])
             ->name('products.show');
 
-
         // CHECKOUT
-        Route::get('/checkout', [CheckoutController::class, 'index'])
-            ->name('checkout.index');
+        Route::get('/checkout', [CheckoutController::class, 'show'])
+            ->name('checkout.show');
 
         Route::post('/checkout/process', [CheckoutController::class, 'process'])
             ->name('checkout.process');
@@ -94,8 +93,15 @@ Route::middleware(['auth', 'buyer'])
 
         Route::post('/payment/confirm', [PaymentController::class, 'confirm'])
             ->name('payment.confirm');
-    });
 
+        // PROFILE (BUYER ONLY)
+        Route::get('/profile', function () {
+            return view('auth.profile');
+        })->name('profile');
+
+        Route::put('/profile', [ProfileController::class, 'update'])
+            ->name('profile.update');
+    });
 
 /*
 |--------------------------------------------------------------------------
