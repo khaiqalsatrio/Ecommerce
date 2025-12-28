@@ -148,8 +148,8 @@ Route::middleware(['auth', 'admin'])
         // ORDERS
         Route::get('/orders', [OrderAdminController::class, 'index'])
             ->name('orders.index');
-        Route::get('/orders/{order}', [OrderAdminController::class, 'show'])
+        Route::get('/orders/{id}', [OrderAdminController::class, 'show'])
             ->name('orders.show');
-        Route::post('/orders/{order}/status', [OrderAdminController::class, 'updateStatus'])
-            ->name('orders.status');
+        Route::put('/orders/{id}/status', [OrderAdminController::class, 'updateStatus'])
+            ->name('orders.updateStatus');
     });

@@ -7,13 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
         'order_code',
         'total_price',
         'status',
-        'payment_status'
+        'payment_status',
+        'snap_token'  // ← TAMBAHKAN INI untuk Midtrans
     ];
+
+    // TAMBAHKAN relasi ke User (INI YANG KURANG!)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function items()
     {
