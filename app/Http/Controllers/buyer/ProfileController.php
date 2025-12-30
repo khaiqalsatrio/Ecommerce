@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\buyer;
+namespace App\Http\Controllers\Buyer;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -15,17 +15,31 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|min:6|confirmed',
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|unique:users,email,' . $user->id,
+            'password'     => 'nullable|min:6|confirmed',
+
+            // VALIDASI ALAMAT
+            'address'      => 'nullable|string',
+            'city'         => 'nullable|string|max:100',
+            'province'     => 'nullable|string|max:100',
+            'postal_code'  => 'nullable|string|max:10',
         ]);
 
+        // UPDATE DATA UTAMA
         $user->update([
-            'name'  => $request->name,
-            'email' => $request->email,
+            'name'        => $request->name,
+            'email'       => $request->email,
+
+            // DATA ALAMAT
+            'address'     => $request->address,
+            'city'        => $request->city,
+            'province'    => $request->province,
+            'postal_code' => $request->postal_code,
         ]);
 
-        if ($request->password) {
+        // UPDATE PASSWORD (JIKA DIISI)
+        if ($request->filled('password')) {
             $user->update([
                 'password' => Hash::make($request->password),
             ]);

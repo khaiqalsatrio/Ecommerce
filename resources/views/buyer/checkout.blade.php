@@ -20,6 +20,50 @@
             <div class="row g-4">
                 {{-- LEFT : Detail Produk --}}
                 <div class="col-lg-8">
+                    {{-- Alamat Pengiriman --}}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h5 class="mb-0 fw-semibold">Alamat Pengiriman</h5>
+                                    <small class="text-muted">Alamat utama Anda</small>
+                                </div>
+                                <a href="{{ route('buyer.profile') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i> Ubah
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @if($address)
+                            <div class="d-flex align-items-start">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                    <i class="bi bi-geo-alt-fill text-primary"></i>
+                                </div>
+                                <div>
+                                    <p class="mb-1 fw-semibold">{{ auth()->user()->name }}</p>
+                                    <p class="mb-1 text-muted">
+                                        {{ $address->address }}
+                                    </p>
+                                    <small class="text-muted">
+                                        {{ $address->city }},
+                                        {{ $address->province }}
+                                        {{ $address->postal_code }}
+                                    </small>
+                                </div>
+                            </div>
+                            @else
+                            <div class="alert alert-warning mb-0">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Anda belum menambahkan alamat.
+                                <a href="{{ route('buyer.profile') }}" class="fw-semibold">
+                                    Tambah alamat sekarang
+                                </a>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-white border-bottom py-3">
                             <div class="d-flex align-items-center">
@@ -171,6 +215,9 @@
 @endsection
 
 @push('scripts')
+{{-- Load SweetAlert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 {{-- Load Midtrans Snap.js - SANDBOX --}}
 <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
 
@@ -209,7 +256,12 @@
                         },
                         onError: function(result) {
                             console.log('Payment error:', result);
-                            alert('Pembayaran gagal. Silakan coba lagi.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Pembayaran Gagal',
+                                text: 'Terjadi kesalahan saat memproses pembayaran. Silakan coba lagi.',
+                                confirmButtonColor: '#dc3545'
+                            });
                             button.disabled = false;
                             button.innerHTML = originalText;
                         },
@@ -221,14 +273,27 @@
                         }
                     });
                 } else {
-                    alert(data.message || 'Checkout gagal. Silakan coba lagi.');
+                    // ✅ Tampilkan error dengan SweetAlert2
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Checkout Gagal',
+                        text: data.message || 'Terjadi kesalahan. Silakan coba lagi.',
+                        confirmButtonColor: '#0d6efd',
+                        confirmButtonText: 'OK'
+                    });
                     button.disabled = false;
                     button.innerHTML = originalText;
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+                // ✅ Tampilkan error dengan SweetAlert2
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi Kesalahan',
+                    text: 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda.',
+                    confirmButtonColor: '#dc3545'
+                });
                 button.disabled = false;
                 button.innerHTML = originalText;
             });

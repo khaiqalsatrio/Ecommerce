@@ -45,6 +45,58 @@
                     </div>
 
                     <hr>
+                    <h6 class="mb-3 text-muted">Alamat Pengiriman</h6>
+
+                    {{-- Alamat --}}
+                    <div class="mb-3">
+                        <label class="form-label">Alamat Lengkap</label>
+                        <textarea name="address"
+                            rows="3"
+                            class="form-control @error('address') is-invalid @enderror"
+                            placeholder="Nama jalan, nomor rumah, RT/RW">
+                        {{ old('address', auth()->user()->address) }}
+                        </textarea>
+                        @error('address')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="row">
+                        {{-- Kota --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Kota</label>
+                            <input type="text" name="city"
+                                class="form-control @error('city') is-invalid @enderror"
+                                value="{{ old('city', auth()->user()->city) }}">
+                            @error('city')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Provinsi --}}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Provinsi</label>
+                            <input type="text" name="province"
+                                class="form-control @error('province') is-invalid @enderror"
+                                value="{{ old('province', auth()->user()->province) }}">
+                            @error('province')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Kode Pos --}}
+                    <div class="mb-3">
+                        <label class="form-label">Kode Pos</label>
+                        <input type="text" name="postal_code"
+                            class="form-control @error('postal_code') is-invalid @enderror"
+                            value="{{ old('postal_code', auth()->user()->postal_code) }}">
+                        @error('postal_code')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <hr>
 
                     <h6 class="mb-3 text-muted">Ubah Password (opsional)</h6>
 

@@ -93,11 +93,14 @@
                             <td>
                                 @if($order->items->count() > 0)
                                 <div class="small">
-                                    @foreach($order->items as $item)
+                                    @foreach($order->items->take(2) as $item)
                                     <div class="mb-1">
-                                        <i class="bi bi-box text-muted"></i> {{ $item->product->name ?? 'Product not found' }}
+                                        <i class="bi bi-box text-muted"></i> {{ Str::limit($item->product->name ?? 'Product not found', 25) }}
                                     </div>
                                     @endforeach
+                                    @if($order->items->count() > 2)
+                                    <small class="text-muted fst-italic">+{{ $order->items->count() - 2 }} more</small>
+                                    @endif
                                 </div>
                                 @else
                                 <span class="text-muted">-</span>
@@ -105,17 +108,9 @@
                             </td>
 
                             <td>
-                                @if($order->items->count() > 0)
-                                <div class="small">
-                                    @foreach($order->items as $item)
-                                    <div class="mb-1">
-                                        <span class="badge bg-secondary">{{ $item->qty }}</span>
-                                    </div>
-                                    @endforeach
-                                </div>
-                                @else
-                                <span class="text-muted">-</span>
-                                @endif
+                                <span class="badge bg-secondary">
+                                    {{ $order->items->sum('qty') }}
+                                </span>
                             </td>
 
                             <td>
@@ -268,7 +263,7 @@
     </div>
 </div>
 
-<!-- Modal Detail Orders (Outside the table loop) -->
+<!-- Modal Detail Orders -->
 @foreach($orders as $order)
 <div class="modal fade" id="detailModal{{ $order->id }}" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -310,6 +305,43 @@
                     </div>
                 </div>
 
+                <!-- Shipping Address -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-geo-alt-fill text-primary"></i> Shipping Address
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        @if($order->shipping_address && $order->shipping_city && $order->shipping_province && $order->shipping_postal_code)
+                        <div class="d-flex align-items-start">
+                            <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3 flex-shrink-0">
+                                <i class="bi bi-house-door-fill text-primary fs-5"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-2 fw-semibold fs-6">{{ $order->user->name }}</p>
+                                <p class="mb-2 text-muted">
+                                    <i class="bi bi-pin-map-fill text-danger"></i>
+                                    {{ $order->shipping_address }}
+                                </p>
+                                <p class="mb-0 text-muted">
+                                    <i class="bi bi-geo-alt-fill text-success"></i>
+                                    {{ $order->shipping_city }}, {{ $order->shipping_province }} {{ $order->shipping_postal_code }}
+                                </p>
+                            </div>
+                        </div>
+                        @else
+                        <div class="alert alert-warning mb-0 d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                            <div>
+                                <strong>Alamat Tidak Lengkap</strong>
+                                <p class="mb-0 small">Alamat pengiriman belum dilengkapi saat checkout</p>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Order Items -->
                 <div class="card mb-3">
                     <div class="card-header bg-light">
@@ -322,26 +354,33 @@
                             <table class="table table-sm mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Product</th>
+                                        <th class="ps-3">Product</th>
                                         <th class="text-center" style="width: 80px;">Qty</th>
                                         <th class="text-end" style="width: 120px;">Price</th>
-                                        <th class="text-end" style="width: 140px;">Subtotal</th>
+                                        <th class="text-end pe-3" style="width: 140px;">Subtotal</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($order->items as $item)
                                     <tr>
-                                        <td>{{ $item->product->name ?? 'Product not found' }}</td>
-                                        <td class="text-center">{{ $item->qty }}</td>
-                                        <td class="text-end">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                                        <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                        <td class="ps-3">
+                                            <div class="d-flex align-items-center">
+                                                <i class="bi bi-box text-muted me-2"></i>
+                                                {{ $item->product->name ?? 'Product not found' }}
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border">{{ $item->qty }}</span>
+                                        </td>
+                                        <td class="text-end text-muted">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                                        <td class="text-end pe-3 fw-semibold">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot class="table-light">
                                     <tr>
-                                        <td colspan="3" class="text-end fw-bold">Total</td>
-                                        <td class="text-end fw-bold text-success">
+                                        <td colspan="3" class="text-end fw-bold ps-3">Total</td>
+                                        <td class="text-end fw-bold text-success pe-3 fs-5">
                                             Rp {{ number_format($order->total_price, 0, ',', '.') }}
                                         </td>
                                     </tr>
@@ -354,29 +393,63 @@
                 <!-- Status Information -->
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card h-100">
                             <div class="card-body">
-                                <small class="text-muted d-block mb-2">Payment Status</small>
-                                <span class="badge bg-{{ $order->payment_status === 'paid' ? 'success' : 'warning' }} fs-6">
-                                    {{ ucfirst($order->payment_status) }}
+                                <small class="text-muted d-block mb-2">
+                                    <i class="bi bi-credit-card"></i> Payment Status
+                                </small>
+                                @if($order->payment_status === 'paid')
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-circle"></i> Paid
                                 </span>
+                                @elseif($order->payment_status === 'pending')
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="bi bi-clock"></i> Pending
+                                </span>
+                                @else
+                                <span class="badge bg-danger fs-6">
+                                    <i class="bi bi-x-circle"></i> {{ ucfirst($order->payment_status) }}
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card">
+                        <div class="card h-100">
                             <div class="card-body">
-                                <small class="text-muted d-block mb-2">Order Status</small>
-                                <span class="badge bg-primary fs-6">
-                                    {{ ucfirst($order->status) }}
+                                <small class="text-muted d-block mb-2">
+                                    <i class="bi bi-truck"></i> Order Status
+                                </small>
+                                @if($order->status === 'pending')
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="bi bi-hourglass-split"></i> Pending
                                 </span>
+                                @elseif($order->status === 'processing')
+                                <span class="badge bg-info fs-6">
+                                    <i class="bi bi-arrow-repeat"></i> Processing
+                                </span>
+                                @elseif($order->status === 'shipped')
+                                <span class="badge bg-primary fs-6">
+                                    <i class="bi bi-box-seam"></i> Shipped
+                                </span>
+                                @elseif($order->status === 'completed')
+                                <span class="badge bg-success fs-6">
+                                    <i class="bi bi-check-all"></i> Completed
+                                </span>
+                                @else
+                                <span class="badge bg-danger fs-6">
+                                    <i class="bi bi-x-octagon"></i> {{ ucfirst($order->status) }}
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i> Close
+                </button>
             </div>
         </div>
     </div>

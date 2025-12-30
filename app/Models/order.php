@@ -15,7 +15,11 @@ class Order extends Model
         'total_price',
         'status',
         'payment_status',
-        'snap_token'  // ← TAMBAHKAN INI untuk Midtrans
+        'snap_token',  // ← TAMBAHKAN INI untuk Midtrans
+        'shipping_address',
+        'shipping_city',
+        'shipping_province',
+        'shipping_postal_code',
     ];
 
     // TAMBAHKAN relasi ke User (INI YANG KURANG!)

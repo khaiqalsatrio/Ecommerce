@@ -131,7 +131,7 @@
                         </li>
                         <li class="mb-2">
                             <i class="bi bi-envelope-fill me-2"></i>
-                            info@myshop.com
+                            MyCoffee@gmail.com
                         </li>
                         <li class="mb-2">
                             <i class="bi bi-telephone-fill me-2"></i>

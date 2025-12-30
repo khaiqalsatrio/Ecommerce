@@ -17,6 +17,7 @@ class CheckoutController extends Controller
         $user = auth()->user();
         $cart = $user->cart;
 
+        // Validasi cart
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json([
                 'success' => false,
@@ -24,84 +25,90 @@ class CheckoutController extends Controller
             ], 400);
         }
 
+        // ✅ VALIDASI ALAMAT
+        if (!$user->address || !$user->city || !$user->province || !$user->postal_code) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mohon lengkapi alamat pengiriman terlebih dahulu'
+            ], 400);
+        }
+
         try {
             return DB::transaction(function () use ($cart, $user) {
 
-                $total = 0;
-                foreach ($cart->items as $item) {
-                    $total += $item->qty * $item->price;
-                }
+                // Hitung total
+                $total = $cart->items->sum(fn($item) => $item->qty * $item->price);
 
-                // Buat order
+                // =========================
+                // BUAT ORDER + SIMPAN ALAMAT
+                // =========================
                 $order = Order::create([
                     'user_id' => $user->id,
-                    'order_code' => 'ORD-' . now()->format('YmdHis') . rand(100, 999),
+                    'order_code' => 'ORD-' . now()->format('YmdHis') . random_int(100, 999),
                     'total_price' => $total,
                     'status' => 'pending',
-                    'payment_status' => 'unpaid'
+                    'payment_status' => 'unpaid',
+                    // ✅ SIMPAN ALAMAT KE ORDER
+                    'shipping_address' => $user->address,
+                    'shipping_city' => $user->city,
+                    'shipping_province' => $user->province,
+                    'shipping_postal_code' => $user->postal_code,
                 ]);
 
-                // Siapkan item details untuk Midtrans
                 $itemDetails = [];
 
+                // ... sisa code sama seperti sebelumnya
                 foreach ($cart->items as $item) {
+                    $product = $item->product;
 
-                    if ($item->product->stock < $item->qty) {
-                        throw new \Exception('Stok produk ' . $item->product->name . ' tidak mencukupi');
+                    if (!$product || $product->stock < $item->qty) {
+                        throw new \Exception('Stok produk tidak mencukupi');
                     }
 
                     OrderItem::create([
                         'order_id' => $order->id,
-                        'product_id' => $item->product_id,
+                        'product_id' => $product->id,
                         'qty' => $item->qty,
                         'price' => $item->price,
                         'subtotal' => $item->qty * $item->price
                     ]);
 
-                    // Tambahkan ke item details Midtrans
-                    $itemDetails[] = array(
-                        'id' => 'product-' . $item->product_id,
+                    $itemDetails[] = [
+                        'id' => 'product-' . $product->id,
                         'price' => (int) $item->price,
                         'quantity' => $item->qty,
-                        'name' => $item->product->name ?? 'Product',
-                    );
+                        'name' => $product->name,
+                    ];
 
-                    $item->product->decrement('stock', $item->qty);
+                    $product->decrement('stock', $item->qty);
                 }
 
-                // Hapus cart setelah order dibuat
                 $cart->items()->delete();
 
-                // =========================
-                // KONFIGURASI MIDTRANS (SANDBOX)
-                // =========================
+                // Midtrans config
                 \Midtrans\Config::$serverKey = config('midtrans.server_key');
-                \Midtrans\Config::$isProduction = false; // SANDBOX MODE
+                \Midtrans\Config::$isProduction = false;
                 \Midtrans\Config::$isSanitized = true;
                 \Midtrans\Config::$is3ds = true;
 
-                // =========================
-                // PARAMETER TRANSAKSI
-                // =========================
-                $params = array(
-                    'transaction_details' => array(
+                $params = [
+                    'transaction_details' => [
                         'order_id' => $order->order_code,
                         'gross_amount' => (int) $order->total_price,
-                    ),
-                    'customer_details' => array(
+                    ],
+                    'customer_details' => [
                         'first_name' => $user->name,
                         'email' => $user->email,
-                    ),
+                    ],
                     'item_details' => $itemDetails,
-                );
+                ];
 
-                // Generate Snap Token
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-                // Simpan snap token ke order
-                $order->update(['snap_token' => $snapToken]);
+                $order->update([
+                    'snap_token' => $snapToken
+                ]);
 
-                // Return JSON untuk AJAX request
                 return response()->json([
                     'success' => true,
                     'snap_token' => $snapToken,
@@ -110,9 +117,14 @@ class CheckoutController extends Controller
                 ]);
             });
         } catch (\Exception $e) {
+            Log::error('Checkout Error', [
+                'message' => $e->getMessage(),
+                'user_id' => auth()->id()
+            ]);
+
             return response()->json([
                 'success' => false,
-                'message' => 'Checkout gagal: ' . $e->getMessage(),
+                'message' => 'Checkout gagal',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -120,19 +132,29 @@ class CheckoutController extends Controller
 
     public function show()
     {
-        $cart = auth()->user()->cart;
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $cart = $user->cart;
 
         if (!$cart || $cart->items->isEmpty()) {
-            return redirect()->route('buyer.cart.index')->with('error', 'Cart kosong');
+            return redirect()
+                ->route('buyer.cart.index')
+                ->with('error', 'Cart kosong');
         }
 
-        $total = 0;
-        foreach ($cart->items as $item) {
-            $total += $item->qty * $item->price;
-        }
+        $total = $cart->items->sum(fn($item) => $item->qty * $item->price);
 
-        return view('buyer.checkout', compact('cart', 'total'));
+        // Langsung ambil data user (alamat ada di tabel users)
+        $address = $user;
+
+        // ✅ UBAH INI - sesuaikan dengan struktur folder
+        return view('buyer.checkout', [  // bukan 'buyer.checkout.index'
+            'cart' => $cart,
+            'total' => $total,
+            'address' => $address
+        ]);
     }
+
 
     /**
      * Halaman sukses setelah payment
