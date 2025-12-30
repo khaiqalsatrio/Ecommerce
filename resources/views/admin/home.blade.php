@@ -113,7 +113,7 @@
                             </h5>
                             <p class="text-muted small mb-0">Grafik penjualan bulanan tahun ini</p>
                         </div>
-                        <div class="badge bg-primary bg-opacity-10 text-primary">2024</div>
+                        <div class="badge bg-primary bg-opacity-10 text-primary">2025</div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -132,18 +132,18 @@
                 </div>
                 <div class="card-body">
                     <!-- Conversion Rate -->
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="mb-2">
+                        <!-- <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="text-muted small">Conversion Rate</span>
                             <span class="fw-bold text-success">
                                 {{ $total_orders > 0 ? number_format(($paid_orders / $total_orders) * 100, 1) : 0 }}%
                             </span>
-                        </div>
-                        <div class="progress" style="height: 8px;">
+                        </div> -->
+                        <!-- <div class="progress" style="height: 8px;">
                             <div class="progress-bar bg-success" 
                                  style="width: {{ $total_orders > 0 ? ($paid_orders / $total_orders) * 100 : 0 }}%">
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- Products per Category -->
                     <div class="mb-4">

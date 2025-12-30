@@ -53,6 +53,8 @@
                             <th class="px-4" style="width: 60px;">#</th>
                             <th>Order Code</th>
                             <th>Customer</th>
+                            <th>Products</th>
+                            <th>Qty</th>
                             <th>Total</th>
                             <th>Payment</th>
                             <th>Status</th>
@@ -86,6 +88,34 @@
                                         <small class="text-muted">{{ $order->user->email ?? '-' }}</small>
                                     </div>
                                 </div>
+                            </td>
+
+                            <td>
+                                @if($order->items->count() > 0)
+                                <div class="small">
+                                    @foreach($order->items as $item)
+                                    <div class="mb-1">
+                                        <i class="bi bi-box text-muted"></i> {{ $item->product->name ?? 'Product not found' }}
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @else
+                                <span class="text-muted">-</span>
+                                @endif
+                            </td>
+
+                            <td>
+                                @if($order->items->count() > 0)
+                                <div class="small">
+                                    @foreach($order->items as $item)
+                                    <div class="mb-1">
+                                        <span class="badge bg-secondary">{{ $item->qty }}</span>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @else
+                                <span class="text-muted">-</span>
+                                @endif
                             </td>
 
                             <td>
@@ -211,123 +241,9 @@
                                 </div>
                             </td>
                         </tr>
-
-                        <!-- Modal Detail Order -->
-                        <div class="modal fade" id="detailModal{{ $order->id }}" tabindex="-1">
-                            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <div>
-                                            <h5 class="modal-title fw-bold mb-1">Order Details</h5>
-                                            <p class="mb-0 opacity-75 small">{{ $order->order_code }}</p>
-                                        </div>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Customer Information -->
-                                        <div class="card mb-3">
-                                            <div class="card-header bg-light">
-                                                <h6 class="mb-0">
-                                                    <i class="bi bi-person-circle text-primary"></i> Customer Information
-                                                </h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row g-3">
-                                                    <div class="col-md-6">
-                                                        <small class="text-muted d-block mb-1">Name</small>
-                                                        <strong>{{ $order->user->name }}</strong>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <small class="text-muted d-block mb-1">Email</small>
-                                                        <strong>{{ $order->user->email }}</strong>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <small class="text-muted d-block mb-1">Phone</small>
-                                                        <strong>{{ $order->user->phone ?? '-' }}</strong>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <small class="text-muted d-block mb-1">Order Date</small>
-                                                        <strong>{{ $order->created_at->format('d M Y, H:i') }}</strong>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Order Items -->
-                                        <div class="card mb-3">
-                                            <div class="card-header bg-light">
-                                                <h6 class="mb-0">
-                                                    <i class="bi bi-cart-check text-primary"></i> Order Items
-                                                </h6>
-                                            </div>
-                                            <div class="card-body p-0">
-                                                <div class="table-responsive">
-                                                    <table class="table table-sm mb-0">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th>Product</th>
-                                                                <th class="text-center" style="width: 80px;">Qty</th>
-                                                                <th class="text-end" style="width: 120px;">Price</th>
-                                                                <th class="text-end" style="width: 140px;">Subtotal</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @foreach($order->items as $item)
-                                                            <tr>
-                                                                <td>{{ $item->product->name ?? 'Product not found' }}</td>
-                                                                <td class="text-center">{{ $item->qty }}</td>
-                                                                <td class="text-end">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                                                                <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                                                            </tr>
-                                                            @endforeach
-                                                        </tbody>
-                                                        <tfoot class="table-light">
-                                                            <tr>
-                                                                <td colspan="3" class="text-end fw-bold">Total</td>
-                                                                <td class="text-end fw-bold text-success">
-                                                                    Rp {{ number_format($order->total_price, 0, ',', '.') }}
-                                                                </td>
-                                                            </tr>
-                                                        </tfoot>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Status Information -->
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <small class="text-muted d-block mb-2">Payment Status</small>
-                                                        <span class="badge bg-{{ $order->payment_status === 'paid' ? 'success' : 'warning' }} fs-6">
-                                                            {{ ucfirst($order->payment_status) }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card">
-                                                    <div class="card-body">
-                                                        <small class="text-muted d-block mb-2">Order Status</small>
-                                                        <span class="badge bg-primary fs-6">
-                                                            {{ ucfirst($order->status) }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-5">
+                            <td colspan="10" class="text-center py-5">
                                 <div class="text-muted">
                                     <i class="bi bi-inbox display-1 d-block mb-3"></i>
                                     <h5>No Orders Found</h5>
@@ -351,4 +267,120 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Detail Orders (Outside the table loop) -->
+@foreach($orders as $order)
+<div class="modal fade" id="detailModal{{ $order->id }}" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <div>
+                    <h5 class="modal-title fw-bold mb-1">Order Details</h5>
+                    <p class="mb-0 opacity-75 small">{{ $order->order_code }}</p>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Customer Information -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-person-circle text-primary"></i> Customer Information
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <small class="text-muted d-block mb-1">Name</small>
+                                <strong>{{ $order->user->name }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block mb-1">Email</small>
+                                <strong>{{ $order->user->email }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block mb-1">Phone</small>
+                                <strong>{{ $order->user->phone ?? '-' }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block mb-1">Order Date</small>
+                                <strong>{{ $order->created_at->format('d M Y, H:i') }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-cart-check text-primary"></i> Order Items
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Product</th>
+                                        <th class="text-center" style="width: 80px;">Qty</th>
+                                        <th class="text-end" style="width: 120px;">Price</th>
+                                        <th class="text-end" style="width: 140px;">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($order->items as $item)
+                                    <tr>
+                                        <td>{{ $item->product->name ?? 'Product not found' }}</td>
+                                        <td class="text-center">{{ $item->qty }}</td>
+                                        <td class="text-end">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                                        <td class="text-end">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="3" class="text-end fw-bold">Total</td>
+                                        <td class="text-end fw-bold text-success">
+                                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Information -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <small class="text-muted d-block mb-2">Payment Status</small>
+                                <span class="badge bg-{{ $order->payment_status === 'paid' ? 'success' : 'warning' }} fs-6">
+                                    {{ ucfirst($order->payment_status) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <small class="text-muted d-block mb-2">Order Status</small>
+                                <span class="badge bg-primary fs-6">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
 @endsection
