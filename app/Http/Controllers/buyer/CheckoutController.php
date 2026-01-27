@@ -48,7 +48,7 @@ class CheckoutController extends Controller
                     'total_price' => $total,
                     'status' => 'pending',
                     'payment_status' => 'unpaid',
-                    // ✅ SIMPAN ALAMAT KE ORDER
+                    //  SIMPAN ALAMAT KE ORDER
                     'shipping_address' => $user->address,
                     'shipping_city' => $user->city,
                     'shipping_province' => $user->province,
