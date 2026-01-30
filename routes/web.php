@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 // AUTH
 use App\Http\Controllers\Auth\AuthController;
 
+use App\Http\Controllers\Admin\UserController;
+
 // BUYER
 use App\Http\Controllers\Buyer\ProductController;
 use App\Http\Controllers\Buyer\CartController;
@@ -35,6 +37,7 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 // CART (VIEW ONLY)
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 
+
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES
@@ -49,6 +52,17 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+
+    Route::get('/users', [UserController::class, 'index'])
+        ->name('admin.data-user');
+
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])
+        ->name('admin.users.destroy');
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -117,39 +131,32 @@ Route::middleware(['auth', 'admin'])
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
 
+        // USERS
+        Route::get('/users', [UserController::class, 'index'])
+            ->name('data-user');
+
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])
+            ->name('users.destroy');
+
         // PRODUCTS
-        Route::get('/products', [ProductAdminController::class, 'index'])
-            ->name('products.index');
-        Route::get('/products/create', [ProductAdminController::class, 'create'])
-            ->name('products.create');
-        Route::post('/products', [ProductAdminController::class, 'store'])
-            ->name('products.store');
-        Route::get('/products/{product}/edit', [ProductAdminController::class, 'edit'])
-            ->name('products.edit');
-        Route::put('/products/{product}', [ProductAdminController::class, 'update'])
-            ->name('products.update');
-        Route::delete('/products/{product}', [ProductAdminController::class, 'destroy'])
-            ->name('products.destroy');
+        Route::resource('products', ProductAdminController::class)
+            ->except(['show']);
 
         // CATEGORIES
-        Route::get('/categories', [CategoryAdminController::class, 'index'])
-            ->name('categories.index');
-        Route::get('/categories/create', [CategoryAdminController::class, 'create'])
-            ->name('categories.create');
-        Route::post('/categories', [CategoryAdminController::class, 'store'])
-            ->name('categories.store');
-        Route::get('/categories/{category}/edit', [CategoryAdminController::class, 'edit'])
-            ->name('categories.edit');
-        Route::put('/categories/{category}', [CategoryAdminController::class, 'update'])
-            ->name('categories.update');
-        Route::delete('/categories/{category}', [CategoryAdminController::class, 'destroy'])
-            ->name('categories.destroy');
+        Route::resource('categories', CategoryAdminController::class)
+            ->except(['show']);
 
         // ORDERS
         Route::get('/orders', [OrderAdminController::class, 'index'])
             ->name('orders.index');
-        Route::get('/orders/{id}', [OrderAdminController::class, 'show'])
+
+        Route::get('/orders/{order}', [OrderAdminController::class, 'show'])
             ->name('orders.show');
-        Route::put('/orders/{id}/status', [OrderAdminController::class, 'updateStatus'])
+
+        Route::put('/orders/{order}/status', [OrderAdminController::class, 'updateStatus'])
             ->name('orders.updateStatus');
+
+        // ✅ PRINT STRUK
+        Route::get('/orders/{order}/print', [OrderAdminController::class, 'print'])
+            ->name('print');
     });

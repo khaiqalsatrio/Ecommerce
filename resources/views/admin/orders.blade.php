@@ -182,6 +182,14 @@
                                         <i class="bi bi-eye"></i>
                                     </button>
 
+                                    <!-- Print Struk -->
+                                    <a href="{{ route('admin.print', $order->id) }}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-outline-dark"
+                                        title="Print Struk">
+                                        <i class="bi bi-printer"></i>
+                                    </a>
+
                                     <!-- Update Status Dropdown -->
                                     @if($order->payment_status === 'paid' && $order->status !== 'completed' && $order->status !== 'cancelled')
                                     <div class="dropdown">

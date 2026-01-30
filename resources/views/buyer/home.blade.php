@@ -1,3 +1,4 @@
+
 @extends('buyer.layout.buyer')
 
 @section('title', 'Home')
@@ -5,64 +6,63 @@
 @section('content')
 
 {{-- HERO BANNER --}}
-<div class="mb-5 ">
-    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+<div class="hero-slider">
+    <!-- {{-- Slide 1 - YouTube Video --}}
+    <div class="hero-slide">
+        <div class="hero-video-wrapper">
+            <iframe
+                class="hero-video"
+                src="https://www.youtube.com/embed/0NH_gFR-4EI?autoplay=1&mute=1&loop=1&playlist=0NH_gFR-4EI&controls=0&showinfo=0&rel=0&modestbranding=1"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
         </div>
-
-        <div class="carousel-inner rounded-3 shadow">
-            {{-- Slide 1 --}}
-            <div class="carousel-item active">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
-                    <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
-                        <h1 class="display-4 fw-bold mb-3">Selamat Datang di MyCoffee</h1>
-                        <p class="lead mb-4">Temukan produk berkualitas dengan harga terbaik</p>
-                        <a href="#products" class="btn btn-light btn-lg px-4 rounded-pill">
-                            <i class="bi bi-bag-check me-2"></i>Belanja Sekarang
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Slide 2 --}}
-            <div class="carousel-item">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
-                    <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
-                        <h1 class="display-4 fw-bold mb-3">Promo Spesial</h1>
-                        <p class="lead mb-4">Diskon hingga 50% untuk produk pilihan</p>
-                        <a href="#products" class="btn btn-light btn-lg px-4 rounded-pill">
-                            <i class="bi bi-tags me-2"></i>Lihat Promo
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Slide 3 --}}
-            <div class="carousel-item">
-                <div class="position-relative" style="height: 400px; background: linear-gradient(135deg, #212529 0%, #212529 100%);">
-                    <div class="position-absolute top-50 start-50 translate-middle text-center text-white w-100 px-3">
-                        <h1 class="display-4 fw-bold mb-3">Gratis Ongkir</h1>
-                        <p class="lead mb-4">Untuk pembelian minimal Rp 100.000</p>
-                        <a href="#products" class="btn btn-light btn-lg px-4 rounded-pill">
-                            <i class="bi bi-truck me-2"></i>Belanja Sekarang
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <div class="hero-content">
+            <h1>Selamat Datang di MyCoffee</h1>
+            <p>Temukan produk berkualitas dengan harga terbaik</p>
+            <a href="#" class="btn btn-primary">Belanja Sekarang</a>
         </div>
+    </div> -->
 
-        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+    {{-- Slide 2 - YouTube Video --}}
+    <div class="hero-slide">
+        <div class="hero-video-wrapper">
+            <iframe
+                class="hero-video"
+                src="https://www.youtube.com/embed/AGDGZfsQ2fk?autoplay=1&mute=1&loop=1&playlist=AGDGZfsQ2fk&controls=0&showinfo=0&rel=0&modestbranding=1"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        </div>
+        <div class="hero-content">
+            <h1>Promo Spesial</h1>
+            <p>Diskon hingga 50% untuk produk pilihan</p>
+            <a href="#" class="btn btn-primary">Lihat Promo</a>
+        </div>
     </div>
+
+    {{-- Slide 3 - YouTube Video --}}
+    <div class="hero-slide">
+        <div class="hero-video-wrapper">
+            <iframe
+                class="hero-video"
+                src="https://www.youtube.com/embed/x-wH0uoraI0?autoplay=1&mute=1&loop=1&playlist=x-wH0uoraI0&controls=0&showinfo=0&rel=0&modestbranding=1"
+                frameborder="0"
+                allow="autoplay; encrypted-media"
+                allowfullscreen>
+            </iframe>
+        </div>
+        <div class="hero-content">
+            <h1>Gratis Ongkir</h1>
+            <p>Untuk pembelian minimal Rp 100.000</p>
+            <a href="#" class="btn btn-primary">Belanja Sekarang</a>
+        </div>
+    </div>
+
+    <button class="slider-btn prev">Previous</button>
+    <button class="slider-btn next">Next</button>
 </div>
 
 {{-- FEATURES SECTION --}}
@@ -199,6 +199,160 @@
         transform: translateY(-5px);
         box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
+
+    .hero-slider {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        overflow: hidden;
+        background: #000;
+        margin-bottom: 8px;
+        border-radius: 5px;
+    }
+
+    .hero-slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+    }
+
+    .hero-video-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .hero-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100vw;
+        height: 56.25vw;
+        /* Ratio 16:9 */
+        min-height: 100vh;
+        min-width: 177.77vh;
+        /* Ratio 16:9 */
+        transform: translate(-50%, -50%);
+    }
+
+    .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 2;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.3);
+        padding: 2rem 3rem;
+        border-radius: 10px;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    .hero-content p {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-primary {
+        background: #ff6b6b;
+        color: white;
+        padding: 1rem 2rem;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #ff5252;
+    }
+
+    .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        z-index: 3;
+        transition: background 0.3s;
+        font-size: 1rem;
+    }
+
+    .slider-btn:hover {
+        background: rgba(0, 0, 0, 0.8);
+    }
+
+    .slider-btn.prev {
+        left: 20px;
+    }
+
+    .slider-btn.next {
+        right: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-slider {
+            height: 400px;
+        }
+
+        .hero-content h1 {
+            font-size: 2rem;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+        }
+
+        .slider-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+    }
 </style>
 
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const slides = document.querySelectorAll('.hero-slide');
+        const prevBtn = document.querySelector('.slider-btn.prev');
+        const nextBtn = document.querySelector('.slider-btn.next');
+        let currentSlide = 0;
+
+        // Show first slide
+        slides[0].classList.add('active');
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+        nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+
+        // Auto slide every 8 seconds (lebih lama untuk video)
+        setInterval(() => showSlide(currentSlide + 1), 8000);
+    });
+</script>

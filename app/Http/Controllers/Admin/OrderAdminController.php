@@ -23,7 +23,7 @@ class OrderAdminController extends Controller
         $orders = $query->paginate(15);
 
         // PASTIKAN INI:
-        return view('admin.orders', compact('orders'));  
+        return view('admin.orders', compact('orders'));
     }
 
     /**
@@ -82,5 +82,12 @@ class OrderAdminController extends Controller
         }
 
         return redirect()->back()->with('success', 'Order berhasil dibatalkan dan stok dikembalikan.');
+    }
+
+    public function print(Order $order)
+    {
+        $order->load(['user', 'items.product']);
+
+        return view('admin.print', compact('order'));
     }
 }

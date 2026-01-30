@@ -97,7 +97,8 @@ class ProductAdminController extends Controller
             'stock'       => 'required|integer|min:0',
             'description' => 'nullable|string',
             'weight'      => 'nullable|numeric|min:0',
-            'status'      => 'required|in:active,inactive',
+            // Hapus atau ubah jadi nullable jika status tidak ada di form
+            // 'status'   => 'nullable|in:active,inactive',
         ]);
 
         $product->update([
@@ -107,7 +108,8 @@ class ProductAdminController extends Controller
             'price'       => $request->price,
             'stock'       => $request->stock,
             'weight'      => $request->weight,
-            'status'      => $request->status,
+            // Hapus baris ini jika status tidak diupdate
+            // 'status'   => $request->status,
         ]);
 
         return redirect()

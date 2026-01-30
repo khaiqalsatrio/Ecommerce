@@ -90,11 +90,12 @@
         </li>
 
         <li>
-            <a href="#"
-                class="nav-link">
-                <i class="bi bi-cash-stack"></i> Cashier
+            <a href="{{ route('admin.data-user') }}"
+                class="nav-link {{ request()->routeIs('admin.data-user') ? 'active' : '' }}">
+                <i class="bi bi-people"></i> Data User
             </a>
         </li>
+
 
         <li class="mt-4">
             <form action="/logout" method="POST">
